@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 虚拟环境
+venv/
+.venv/
+
+# 环境变量与敏感配置
+.env
+
+# 本地测试数据库文件
+*.db
+
+# 日志
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 大体积的 Scalar 文档资源（4.6MB）：不传仓库，缺失时自动回退 CDN
+app/static/scalar/standalone.js
