@@ -1,0 +1,257 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-0001-4a5b-8c6d-000000000001",
+    "name": "个人博客系统 Web API",
+    "description": "个人博客系统 Web API 接口测试集合（12 个接口）。\n\n使用步骤：\n1. 修改集合变量 base_url（默认 http://127.0.0.1:8000）\n2. 先执行「用户模块 → 用户登录」，登录成功后脚本会自动把 token 存入集合变量 token\n3. 其余需要鉴权的接口会自动携带 Authorization: Bearer {{token}}",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "用户模块",
+      "item": [
+        {
+          "name": "1. 用户注册",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"123456\",\n  \"email\": \"test@qq.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/register",
+              "host": ["{{base_url}}"],
+              "path": ["users", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. 用户登录（自动保存 token）",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('登录成功返回 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var data = pm.response.json();",
+                  "if (data.access_token) {",
+                  "    pm.collectionVariables.set('token', data.access_token);",
+                  "    console.log('token 已自动存入集合变量');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/login",
+              "host": ["{{base_url}}"],
+              "path": ["users", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. 获取当前用户信息",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["users", "me"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "分类模块",
+      "item": [
+        {
+          "name": "4. 新增分类",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Python\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": ["{{base_url}}"],
+              "path": ["categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. 分类列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": ["{{base_url}}"],
+              "path": ["categories"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "文章模块",
+      "item": [
+        {
+          "name": "6. 发布文章",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"我的第一篇文章\",\n  \"content\": \"Hello World\",\n  \"category_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/articles",
+              "host": ["{{base_url}}"],
+              "path": ["articles"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. 文章列表（分页/筛选）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/articles?page=1&size=10&category_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["articles"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "size", "value": "10" },
+                { "key": "category_id", "value": "1" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. 文章详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/articles/1",
+              "host": ["{{base_url}}"],
+              "path": ["articles", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "9. 修改文章",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"修改后的标题\",\n  \"content\": \"修改后的内容\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/articles/1",
+              "host": ["{{base_url}}"],
+              "path": ["articles", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10. 删除文章",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/articles/1",
+              "host": ["{{base_url}}"],
+              "path": ["articles", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "评论模块",
+      "item": [
+        {
+          "name": "11. 发表评论",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"好文章！\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/articles/1/comments",
+              "host": ["{{base_url}}"],
+              "path": ["articles", "1", "comments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "12. 评论列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/articles/1/comments",
+              "host": ["{{base_url}}"],
+              "path": ["articles", "1", "comments"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
