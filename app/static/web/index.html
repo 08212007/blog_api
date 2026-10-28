@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>拾光 · 个人博客</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --ink: #1f2329;
+    --ink-2: #4e5560;
+    --muted: #9aa1ab;
+    --line: #eceef1;
+    --accent: #e05d38;
+    --accent-deep: #c94b29;
+    --accent-soft: #fdeee8;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(31,35,41,.04), 0 4px 16px rgba(31,35,41,.06);
+    --shadow-hover: 0 4px 8px rgba(31,35,41,.06), 0 16px 40px rgba(31,35,41,.12);
+    --serif: Georgia, "Times New Roman", "Songti SC", "STSong", "SimSun", serif;
+    --sans: "PingFang SC", "Microsoft YaHei", "DengXian", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.7; }
+  ::selection { background: var(--accent); color: #fff; }
+
+  /* ---------- 页头 ---------- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .brand .logo {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #f2994a);
+    color: #fff; font-size: 17px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(224,93,56,.35);
+    transition: transform .3s;
+  }
+  .brand:hover .logo { transform: rotate(-6deg) scale(1.06); }
+  .brand .name { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .brand .name em { font-style: normal; color: var(--accent); }
+  .nav-right { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .who { display: flex; align-items: center; gap: 8px; margin-right: 4px; color: var(--ink-2); }
+
+  /* ---------- 头像 ---------- */
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    color: #fff; font-size: 13px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  /* ---------- 按钮 ---------- */
+  .btn {
+    font-size: 13px; font-weight: 600; letter-spacing: 1px;
+    padding: 8px 18px; border-radius: 999px; cursor: pointer;
+    border: 1.5px solid var(--line); background: #fff; color: var(--ink-2);
+    transition: all .25s;
+  }
+  .btn:hover { border-color: var(--ink); color: var(--ink); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(224,93,56,.3); }
+  .btn.primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(224,93,56,.4); }
+  .btn.danger:hover { border-color: #d64545; color: #d64545; }
+  .btn[disabled] { opacity: .4; cursor: not-allowed; pointer-events: none; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; overflow: hidden;
+    background: linear-gradient(120deg, #fff8f4 0%, #fdf3ee 40%, #f4f7fb 100%);
+    border-bottom: 1px solid var(--line);
+  }
+  .hero::before, .hero::after {
+    content: ""; position: absolute; border-radius: 50%; filter: blur(70px); opacity: .5;
+  }
+  .hero::before { width: 340px; height: 340px; background: #ffd9c7; top: -120px; right: 8%; }
+  .hero::after { width: 260px; height: 260px; background: #dbe7ff; bottom: -140px; left: 12%; }
+  .hero-inner { position: relative; max-width: 1080px; margin: 0 auto; padding: 72px 24px 60px; animation: rise .7s cubic-bezier(.2,.7,.3,1) both; }
+  .hero .kicker {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 3px;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 5px 14px; border-radius: 999px; margin-bottom: 20px;
+  }
+  .hero h1 { font-size: 44px; font-weight: 800; letter-spacing: 1px; line-height: 1.25; }
+  .hero h1 span { color: var(--accent); }
+  .hero p { margin-top: 14px; color: var(--ink-2); font-size: 15px; }
+
+  /* ---------- 布局 ---------- */
+  .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 90px; display: flex; gap: 32px; align-items: flex-start; }
+
+  /* ---------- 分类侧栏 ---------- */
+  aside {
+    width: 190px; flex-shrink: 0; position: sticky; top: 96px;
+    background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 20px 14px; animation: rise .7s .1s cubic-bezier(.2,.7,.3,1) both;
+  }
+  aside h3 { font-size: 12px; letter-spacing: 3px; color: var(--muted); font-weight: 600; padding: 0 10px 12px; }
+  .cat-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 10px; cursor: pointer;
+    font-size: 14px; color: var(--ink-2); transition: all .2s;
+  }
+  .cat-item .dot { width: 6px; height: 6px; border-radius: 50%; background: #d3d8de; transition: all .2s; flex-shrink: 0; }
+  .cat-item:hover { background: #f4f6f8; color: var(--ink); }
+  .cat-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .cat-item.active .dot { background: var(--accent); box-shadow: 0 0 0 3px rgba(224,93,56,.2); }
+
+  /* ---------- 文章卡片 ---------- */
+  main { flex: 1; min-width: 0; }
+  .article-item {
+    background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 26px 30px; margin-bottom: 18px; cursor: pointer;
+    border: 1px solid transparent;
+    opacity: 0; animation: rise .55s cubic-bezier(.2,.7,.3,1) forwards;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .article-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  .article-item h2 { font-size: 20px; font-weight: 700; line-height: 1.4; transition: color .2s; }
+  .article-item:hover h2 { color: var(--accent); }
+  .excerpt {
+    color: var(--ink-2); font-size: 14px; margin-top: 10px;
+    overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .meta { margin-top: 16px; display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--muted); }
+  .meta .sep { color: #d8dce1; }
+  .tag {
+    font-size: 12px; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); padding: 3px 12px; border-radius: 999px;
+  }
+  .empty {
+    background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+    text-align: center; color: var(--muted); padding: 80px 0; font-size: 15px;
+  }
+
+  /* ---------- 分页 ---------- */
+  .pager { margin-top: 30px; display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .pager .pg-info { font-size: 13px; color: var(--muted); }
+
+  /* ---------- 详情页 ---------- */
+  .back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; margin-bottom: 18px; transition: color .2s; }
+  .back:hover { color: var(--accent); }
+  .panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 44px 48px; animation: rise .55s cubic-bezier(.2,.7,.3,1) both; }
+  .detail h1 { font-size: 32px; font-weight: 800; line-height: 1.35; letter-spacing: .5px; }
+  .detail .meta { margin: 18px 0 26px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+  .detail .content { font-size: 16px; line-height: 2.05; color: #373d45; white-space: pre-wrap; text-align: justify; }
+  .detail-ops { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+  /* ---------- 评论 ---------- */
+  .comments { margin-top: 24px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 34px 48px 40px; animation: rise .55s .08s cubic-bezier(.2,.7,.3,1) both; }
+  .comments h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .comments h3 b { color: var(--accent); }
+  .comment { display: flex; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .comment:last-of-type { border-bottom: none; }
+  .comment .body { flex: 1; min-width: 0; }
+  .comment .who { font-size: 14px; font-weight: 700; }
+  .comment .when { font-size: 12px; color: var(--muted); margin-left: 10px; font-weight: 400; }
+  .comment p { margin-top: 5px; font-size: 14px; color: var(--ink-2); }
+  .comment-form { margin-top: 22px; }
+
+  /* ---------- 表单 ---------- */
+  textarea, input[type=text], input[type=password], input[type=email], select {
+    width: 100%; padding: 11px 16px; font-family: var(--sans); font-size: 14px;
+    background: #f7f8fa; color: var(--ink);
+    border: 1.5px solid var(--line); border-radius: 10px;
+    margin-bottom: 14px; outline: none; transition: all .25s;
+  }
+  textarea:focus, input:focus, select:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 4px rgba(224,93,56,.1); }
+  textarea { min-height: 120px; resize: vertical; line-height: 1.8; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239aa1ab' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+
+  /* ---------- 登录弹窗 ---------- */
+  .mask {
+    position: fixed; inset: 0; z-index: 100; display: none;
+    background: rgba(31,35,41,.4); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .mask.show { display: flex; }
+  .dialog {
+    width: 380px; background: #fff; border-radius: 20px; padding: 38px 36px 28px;
+    box-shadow: 0 30px 80px rgba(31,35,41,.25);
+    animation: pop .35s cubic-bezier(.2,.9,.3,1.15) both;
+  }
+  .dialog .logo2 {
+    width: 46px; height: 46px; border-radius: 13px; margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--accent), #f2994a);
+    color: #fff; font-size: 22px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 16px rgba(224,93,56,.35);
+  }
+  .dialog h3 { font-size: 22px; font-weight: 800; }
+  .dialog .tip { font-size: 13px; color: var(--muted); margin: 4px 0 22px; }
+  .dialog .btn { width: 100%; padding: 12px; font-size: 14px; }
+  .dialog .switch { text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .dialog .switch a { color: var(--accent); font-weight: 600; cursor: pointer; text-decoration: none; }
+  .dialog .switch a:hover { text-decoration: underline; }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-8px);
+    background: var(--ink); color: #fff; font-size: 13px;
+    padding: 10px 24px; border-radius: 999px; z-index: 200;
+    box-shadow: 0 10px 30px rgba(31,35,41,.3);
+    opacity: 0; pointer-events: none; transition: all .3s;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pop { from { opacity: 0; transform: scale(.93) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+  @media (max-width: 760px) {
+    .hero-inner { padding: 48px 24px 40px; }
+    .hero h1 { font-size: 30px; }
+    .container { flex-direction: column; gap: 20px; padding-top: 24px; }
+    aside { width: 100%; position: static; }
+    .panel, .comments { padding: 28px 22px; }
+    .detail h1 { font-size: 25px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand" onclick="showList()">
+      <div class="logo">拾</div>
+      <div class="name">拾<em>光</em>博客</div>
+    </div>
+    <div class="nav-right" id="navRight"></div>
+  </div>
+</header>
+
+<div class="hero" id="hero">
+  <div class="hero-inner">
+    <div class="kicker">PERSONAL BLOG</div>
+    <h1>记录代码，<br />也记录<span>生活</span></h1>
+    <p>基于 FastAPI 的个人博客系统 · 用户 / 分类 / 文章 / 评论</p>
+  </div>
+</div>
+
+<div class="container">
+  <aside>
+    <h3>文章分类</h3>
+    <div id="catList"></div>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<div class="mask" id="authMask">
+  <div class="dialog">
+    <div class="logo2">拾</div>
+    <h3 id="authTitle">登录</h3>
+    <div class="tip" id="authTip">欢迎回来，继续你的创作</div>
+    <input type="text" id="fUsername" placeholder="用户名" autocomplete="username" />
+    <input type="email" id="fEmail" placeholder="邮箱" style="display:none" />
+    <input type="password" id="fPassword" placeholder="密码" autocomplete="current-password" />
+    <button class="btn primary" onclick="submitAuth()" id="authBtn">登 录</button>
+    <div class="switch"><a id="authSwitch" onclick="toggleAuth()">没有账号？立即注册</a></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const state = { page: 1, size: 6, categoryId: null, view: 'list', articleId: null, mode: 'login' };
+const AVATAR_COLORS = ['#e05d38', '#3b82c4', '#2d9d78', '#8e6bbf', '#d9a03f', '#c45b7c'];
+const token = () => localStorage.getItem('token');
+const me = () => JSON.parse(localStorage.getItem('me') || 'null');
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function esc(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+function avatar(name, size) {
+  const n = name || '?';
+  let h = 0; for (const ch of n) h = (h * 31 + ch.codePointAt(0)) >>> 0;
+  const bg = AVATAR_COLORS[h % AVATAR_COLORS.length];
+  const s = size || 30;
+  return `<span class="avatar" style="background:${bg};width:${s}px;height:${s}px;font-size:${Math.round(s*0.44)}px">${esc(n.slice(0,1).toUpperCase())}</span>`;
+}
+
+async function api(path, opts = {}) {
+  opts.headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers);
+  if (token()) opts.headers['Authorization'] = 'Bearer ' + token();
+  const res = await fetch(path, opts);
+  if (res.status === 401) { toast('请先登录'); openAuth('login'); throw new Error('401'); }
+  const data = res.status === 204 ? null : await res.json();
+  if (!res.ok) {
+    let msg = data && data.detail;
+    if (Array.isArray(msg)) msg = msg.map(e => e.loc.slice(-1)[0] + ': ' + e.msg).join('；');
+    toast(typeof msg === 'string' ? msg : '请求失败');
+    throw new Error(res.status);
+  }
+  return data;
+}
+
+function renderNav() {
+  const el = document.getElementById('navRight');
+  const u = me();
+  el.innerHTML = u
+    ? `<span class="who">${avatar(u.username)}<span>${esc(u.username)}</span></span>
+       <button class="btn primary" onclick="showPublish()">+ 发布文章</button>
+       <button class="btn" onclick="logout()">退出</button>`
+    : `<button class="btn" onclick="openAuth('login')">登 录</button>
+       <button class="btn primary" onclick="openAuth('register')">注 册</button>`;
+}
+
+async function loadCategories() {
+  const cats = await api('/categories');
+  const el = document.getElementById('catList');
+  const item = (id, name) =>
+    `<div class="cat-item ${state.categoryId===id?'active':''}" onclick="filterCat(${id===null?'null':id})"><span class="dot"></span>${esc(name)}</div>`;
+  el.innerHTML = item(null, '全部文章') + cats.map(c => item(c.id, c.name)).join('');
+}
+
+function filterCat(id) { state.categoryId = id; state.page = 1; showList(); }
+function turnPage(d) { state.page += d; showList(); window.scrollTo({ top: 0 }); }
+
+async function showList() {
+  state.view = 'list';
+  document.getElementById('hero').style.display = 'block';
+  renderNav(); loadCategories();
+  let url = `/articles?page=${state.page}&size=${state.size}`;
+  if (state.categoryId !== null) url += `&category_id=${state.categoryId}`;
+  const data = await api(url);
+  const main = document.getElementById('main');
+  if (!data.items.length) {
+    main.innerHTML = '<div class="empty">这里还没有文章<br /><span style="font-size:13px">登录后点击右上角「发布文章」，写下第一篇吧</span></div>';
+    return;
+  }
+  const totalPages = Math.max(1, Math.ceil(data.total / state.size));
+  main.innerHTML = data.items.map((a, i) => `
+    <div class="article-item" style="animation-delay:${i * 0.07}s" onclick="showDetail(${a.id})">
+      <div class="meta" style="margin:0 0 10px"><span class="tag">${esc(a.category.name)}</span><span>${a.created_at.slice(0, 10)}</span></div>
+      <h2>${esc(a.title)}</h2>
+      <div class="excerpt">${esc(a.content)}</div>
+      <div class="meta">${avatar(a.author.username, 24)}<span>${esc(a.author.username)}</span></div>
+    </div>`).join('') + `
+    <div class="pager">
+      <button class="btn" ${state.page <= 1 ? 'disabled' : ''} onclick="turnPage(-1)">← 上一页</button>
+      <span class="pg-info">${state.page} / ${totalPages} 页 · 共 ${data.total} 篇</span>
+      <button class="btn" ${state.page >= totalPages ? 'disabled' : ''} onclick="turnPage(1)">下一页 →</button>
+    </div>`;
+}
+
+async function showDetail(id) {
+  state.view = 'detail'; state.articleId = id;
+  window.scrollTo({ top: 0 });
+  let a, comments;
+  try {
+    [a, comments] = await Promise.all([api(`/articles/${id}`), api(`/articles/${id}/comments`)]);
+  } catch (e) {
+    // 文章可能刚被删除（404）等异常情况：弹提示并刷新列表，避免页面卡在半渲染状态
+    showList();
+    return;
+  }
+  document.getElementById('hero').style.display = 'none';
+  const u = me();
+  document.getElementById('main').innerHTML = `
+    <span class="back" onclick="showList()">← 返回文章列表</span>
+    <div class="panel detail">
+      <div class="meta" style="margin:0 0 12px"><span class="tag">${esc(a.category.name)}</span></div>
+      <h1>${esc(a.title)}</h1>
+      <div class="meta">${avatar(a.author.username, 28)}<span style="color:var(--ink-2);font-weight:600">${esc(a.author.username)}</span><span class="sep">·</span><span>${a.created_at.replace('T', ' ').slice(0, 16)}</span></div>
+      <div class="content">${esc(a.content)}</div>
+      ${u && u.id === a.author.id ? `<div class="detail-ops"><button class="btn danger" onclick="delArticle(${a.id})">删除文章</button></div>` : ''}
+    </div>
+    <div class="comments">
+      <h3>评论 <b>${comments.total}</b></h3>
+      ${comments.items.length ? comments.items.map(c => `
+        <div class="comment">
+          ${avatar(c.author.username, 36)}
+          <div class="body">
+            <span class="who">${esc(c.author.username)}</span><span class="when">${c.created_at.replace('T', ' ').slice(0, 16)}</span>
+            <p>${esc(c.content)}</p>
+          </div>
+        </div>`).join('') : '<div style="text-align:center;color:var(--muted);padding:26px 0;font-size:14px">还没有评论，来抢沙发</div>'}
+      <div class="comment-form">
+        <textarea id="commentInput" placeholder="友善评论，温暖社区…"></textarea>
+        <button class="btn primary" onclick="postComment()">发表评论</button>
+      </div>
+    </div>`;
+}
+
+async function postComment() {
+  const content = document.getElementById('commentInput').value.trim();
+  if (!content) return toast('评论不能为空');
+  await api(`/articles/${state.articleId}/comments`, { method: 'POST', body: JSON.stringify({ content }) });
+  toast('评论已发表'); showDetail(state.articleId);
+}
+
+async function delArticle(id) {
+  if (!confirm('确定删除这篇文章吗？删除后不可恢复。')) return;
+  await api(`/articles/${id}`, { method: 'DELETE' });
+  toast('文章已删除'); state.page = 1; showList();
+}
+
+async function showPublish() {
+  const cats = await api('/categories');
+  document.getElementById('hero').style.display = 'none';
+  if (!cats.length) { toast('请先在接口文档中创建分类'); return; }
+  document.getElementById('main').innerHTML = `
+    <span class="back" onclick="showList()">← 返回文章列表</span>
+    <div class="panel">
+      <h1 style="font-size:24px;font-weight:800;margin-bottom:6px">发布新文章</h1>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:24px">好的标题是成功的一半</p>
+      <input type="text" id="pTitle" placeholder="请输入文章标题" />
+      <select id="pCat">${cats.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select>
+      <textarea id="pContent" placeholder="开始写作…" style="min-height:280px"></textarea>
+      <button class="btn primary" onclick="publish()">立即发布</button>
+      <button class="btn" onclick="showList()">取 消</button>
+    </div>`;
+}
+
+async function publish() {
+  const title = document.getElementById('pTitle').value.trim();
+  const content = document.getElementById('pContent').value.trim();
+  if (!title || !content) return toast('标题与正文不能为空');
+  const a = await api('/articles', { method: 'POST', body: JSON.stringify({ title, content, category_id: +document.getElementById('pCat').value }) });
+  toast('发布成功'); showDetail(a.id);
+}
+
+function openAuth(mode) {
+  state.mode = mode;
+  document.getElementById('authTitle').textContent = mode === 'login' ? '登录' : '注册';
+  document.getElementById('authTip').textContent = mode === 'login' ? '欢迎回来，继续你的创作' : '一分钟创建账号，开始写作';
+  document.getElementById('authBtn').textContent = mode === 'login' ? '登 录' : '注册并登录';
+  document.getElementById('fEmail').style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('authSwitch').textContent = mode === 'login' ? '没有账号？立即注册' : '已有账号？直接登录';
+  document.getElementById('authMask').classList.add('show');
+  setTimeout(() => document.getElementById('fUsername').focus(), 50);
+}
+function toggleAuth() { openAuth(state.mode === 'login' ? 'register' : 'login'); }
+document.getElementById('authMask').addEventListener('click', e => { if (e.target.id === 'authMask') e.target.classList.remove('show'); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('authMask').classList.contains('show')) submitAuth();
+  if (e.key === 'Escape') document.getElementById('authMask').classList.remove('show');
+});
+
+async function submitAuth() {
+  const username = document.getElementById('fUsername').value.trim();
+  const password = document.getElementById('fPassword').value;
+  if (!username || !password) return toast('请填写用户名和密码');
+  if (state.mode === 'register') {
+    const email = document.getElementById('fEmail').value.trim();
+    if (!email) return toast('请填写邮箱');
+    await api('/users/register', { method: 'POST', body: JSON.stringify({ username, password, email }) });
+  }
+  const data = await api('/users/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+  localStorage.setItem('token', data.access_token);
+  const u = await api('/users/me');
+  localStorage.setItem('me', JSON.stringify(u));
+  document.getElementById('authMask').classList.remove('show');
+  toast(state.mode === 'register' ? '注册成功，已自动登录' : '登录成功');
+  showList();
+}
+
+function logout() { localStorage.clear(); toast('已退出登录'); showList(); }
+
+showList();
+</script>
+</body>
+</html>
