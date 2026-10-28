@@ -212,7 +212,7 @@ curl "http://127.0.0.1:8000/articles?page=1&size=10&category_id=1"
 
 ## 作者
 
-**王志元**
+**晚之约**
 
 - 求职方向：Python 后端开发工程师
 - 邮箱：1769809946@qq.com
